@@ -11,6 +11,9 @@ typedef struct _transform_data_t
     int target_width;
     int target_height;
 
+    int final_width;
+    int final_height;
+
     VALUE proc;
     char* err_str;
 

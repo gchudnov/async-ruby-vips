@@ -5,7 +5,7 @@
 
 extern VALUE cImage;
 
-void av_image_init(VALUE self, const char* src_path, const char* dst_path, const char* err_str);
+void av_image_init(VALUE self, const char* src_path, const char* dst_path, const char* err_str, int width, int height);
 
 void init_async_vips_image();
 

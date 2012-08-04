@@ -22,11 +22,13 @@ static VALUE av_image_error(VALUE self)
 
 
 /* Initialize the object, called before the callback is invoked */
-void av_image_init(VALUE self, const char* src_path, const char* dst_path, const char* err_str)
+void av_image_init(VALUE self, const char* src_path, const char* dst_path, const char* err_str, int width, int height)
 {
     rb_iv_set(self, "@src", (src_path ? rb_str_new2(src_path) : Qnil));
     rb_iv_set(self, "@dst", (dst_path ? rb_str_new2(dst_path) : Qnil));
     rb_iv_set(self, "@error", (err_str ? rb_str_new2(err_str) : Qnil));
+    rb_iv_set(self, "@width", INT2FIX(width));
+    rb_iv_set(self, "@height", INT2FIX(height));
 }
 
 
