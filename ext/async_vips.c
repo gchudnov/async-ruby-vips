@@ -1,6 +1,7 @@
 #include "async_vips.h"
 #include "transform.h"
 #include "writer.h"
+#include "callback.h"
 #include "image.h"
 
 VALUE mAsyncVips, eVipsError;
@@ -66,4 +67,5 @@ void Init_async_vips_ext()
     //
     init_async_vips_transform();
     init_async_vips_image();
+    init_async_event_thread();
 }
