@@ -50,9 +50,6 @@ static void* av_build_image_thread_func(void* data)
             av_get_scale_transform2(image->Xsize, image->Ysize, tdata->target_width, tdata->target_height, image_scale_fit_no_scale_up, &width_ratio, &height_ratio);
 
             //fprintf(stderr, "WIDTH_RATIO: %f, HEIGHT_RATIO: %f\n", width_ratio, height_ratio);
-            width_ratio = 1.0 / width_ratio;
-            height_ratio = 1.0 / height_ratio;
-            //fprintf(stderr, "1 / WIDTH_RATIO: %f, 1 / HEIGHT_RATIO: %f\n", width_ratio, height_ratio);
 
             VipsImage* t = av_internal_shrink_image(image, width_ratio, height_ratio, &tdata->err_str);
             if(t)

@@ -16,8 +16,8 @@ void av_get_scale_transform2(int original_width, int original_height, int desire
     }
     else if(scale_mode & image_scale_stretch) // STRETCH
     {
-        *factor_x = (double) (desired_width) / (double) (original_width);
-        *factor_y = (double) (desired_height) / (double) (original_height);
+        *factor_x = (double) (original_width) / (double) (desired_width);
+        *factor_y = (double) (original_height) / (double) (desired_height);
     }
     else if(scale_mode & image_scale_fit) // FIT
     {
@@ -34,14 +34,14 @@ void av_get_scale_transform2(int original_width, int original_height, int desire
             }
         }
 
-        double k1 = (double) (desired_width) / (double) (original_width);
-        double k2 = (double) (desired_height) / (double) (original_height);
+        double k1 = (double) (original_width) / (double) (desired_width);
+        double k2 = (double) (original_height) / (double) (desired_height);
 
-        double k = (k1 < k2 ? k1 : k2);
+        double k = (k1 > k2 ? k1 : k2);
 
         if(scale_mode & image_scale_no_scale_up)
         {
-            if(k > 1.0)
+            if(k < 1.0)
                 k = 1.0; // do not scale up small images at all.
         }
 

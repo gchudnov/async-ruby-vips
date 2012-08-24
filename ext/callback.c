@@ -5,8 +5,6 @@
 #include <pthread.h>
 
 
-//pthread_once_t et_once = PTHREAD_ONCE_INIT;
-
 typedef struct _tdata_wait_t
 {
     transform_data_t* tdata;
@@ -110,8 +108,6 @@ static void av_create_event_thread(void)
 /* Add the transform data to the event queue */
 void av_add_to_event_qeueue(transform_data_t* tdata)
 {
-    //pthread_once(&et_once, av_create_event_thread);
-
     pthread_mutex_lock(&av_proc_mutex);
     av_proc_queue_push(tdata);
     pthread_mutex_unlock(&av_proc_mutex);
