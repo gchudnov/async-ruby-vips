@@ -114,7 +114,7 @@ void av_add_to_event_qeueue(transform_data_t* tdata)
     pthread_cond_signal(&av_proc_cond);
 }
 
-void init_async_event_thread(void)
+void init_async_vips_event_thread(void)
 {
     av_create_event_thread();
 }

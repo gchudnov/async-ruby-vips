@@ -67,5 +67,5 @@ void Init_async_vips_ext()
     //
     init_async_vips_transform();
     init_async_vips_image();
-    init_async_event_thread();
+    init_async_vips_event_thread();
 }
