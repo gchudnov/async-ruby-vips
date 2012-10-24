@@ -3,6 +3,7 @@
 #include "writer.h"
 #include "callback.h"
 #include "image.h"
+#include "info.h"
 
 VALUE mAsyncVips, eVipsError;
 
@@ -67,5 +68,6 @@ void Init_async_vips_ext()
     //
     init_async_vips_transform();
     init_async_vips_image();
+    init_async_vips_info();
     init_async_vips_event_thread();
 }

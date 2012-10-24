@@ -50,15 +50,16 @@ void av_image_init(VALUE self, const char* src_path, const char* dst_path, const
     rb_iv_set(self, "@width", INT2FIX(width));
     rb_iv_set(self, "@height", INT2FIX(height));
     
-    struct stat sb;
-    if(stat(dst_path, &sb) == 0)
+    const char* file_path = (dst_path ? dst_path : src_path);
+    long long file_size = 0;
+    if(file_path)
     {
-        rb_iv_set(self, "@size", INT2FIX(sb.st_size));
+        struct stat sb;
+        memset(&sb, 0, sizeof(stat));
+        stat(file_path, &sb);
+        file_size = sb.st_size;
     }
-    else
-    {
-        rb_iv_set(self, "@size", 0);
-    }
+    rb_iv_set(self, "@size", INT2FIX(file_size));
 }
 
 

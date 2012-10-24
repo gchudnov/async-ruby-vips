@@ -24,11 +24,19 @@ include AsyncVips
 AsyncVips.transform(:load => srcfile, :scale_x => 800, :save => dstfile) do |img|
   if(img.error != nil)
     puts img.error
-  end                 
+  end
 end
 
 # Set the number of operations cached by VIPS: 
 AsyncVips.set_cache(100)
+
+# Get image information:
+# Allowed symbols are:  :load
+inf = AsyncVips.info(:load => srcfile)
+puts inf.src    # image filepath
+puts inf.width  # image width
+puts inf.height # image height
+puts inf.size   # image size in bytes
 
 
 ## Using event machine
