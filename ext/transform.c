@@ -4,10 +4,10 @@
 #include <pthread.h>
 
 
-ID id_load;
-ID id_save;
-ID id_scale_x;
-ID id_scale_y;
+ID av_t_id_load;
+ID av_t_id_save;
+ID av_t_id_scale_x;
+ID av_t_id_scale_y;
 
 /* Shrinks image using the provided width and height ratios */
 static VipsImage* av_internal_shrink_image(VipsImage* image, double width_ratio, double height_ratio, char** err_str)
@@ -98,16 +98,16 @@ static VALUE av_transform(int argc, VALUE *argv, VALUE self)
         rb_raise(rb_eArgError, "No transformation parameters specified");
 
     // Parse options
-    VALUE load = rb_hash_aref(params, ID2SYM(id_load));
+    VALUE load = rb_hash_aref(params, ID2SYM(av_t_id_load));
     if(NIL_P(load))
         rb_raise(rb_eArgError, "No image source specified: transform(:load => 'image.jpg')");
 
-    VALUE save = rb_hash_aref(params, ID2SYM(id_save));
+    VALUE save = rb_hash_aref(params, ID2SYM(av_t_id_save));
     if(NIL_P(save))
         rb_raise(rb_eArgError, "No image destination specified: transform(:save => 'output.jpg')");
 
-    VALUE scale_x = rb_hash_aref(params, ID2SYM(id_scale_x));
-    VALUE scale_y = rb_hash_aref(params, ID2SYM(id_scale_y));
+    VALUE scale_x = rb_hash_aref(params, ID2SYM(av_t_id_scale_x));
+    VALUE scale_y = rb_hash_aref(params, ID2SYM(av_t_id_scale_y));
 
     if(NIL_P(scale_x) && NIL_P(scale_y))
         rb_raise(rb_eArgError, "No scale width or height specified of the source image: transform(:scale_x => 800, :scale_y => 600)");
@@ -135,8 +135,8 @@ void init_async_vips_transform(void)
 {
     rb_define_singleton_method(mAsyncVips, "transform", av_transform, -1);
 
-    id_load = rb_intern("load");
-    id_save = rb_intern("save");
-    id_scale_x = rb_intern("scale_x");
-    id_scale_y = rb_intern("scale_y");
+    av_t_id_load = rb_intern("load");
+    av_t_id_save = rb_intern("save");
+    av_t_id_scale_x = rb_intern("scale_x");
+    av_t_id_scale_y = rb_intern("scale_y");
 }

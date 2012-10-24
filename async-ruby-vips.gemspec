@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.files = [
     "Gemfile.lock",
     "README.md",
-    "async-ruby-vips-1.0.0.gem",
+    "async-ruby-vips-1.1.0.gem",
     "async-ruby-vips.gemspec",
     "ext/LICENSE",
     "ext/async_vips.c",
