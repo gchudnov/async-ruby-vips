@@ -1,4 +1,7 @@
 #include "image.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+
 
 VALUE cImage;
 
@@ -32,6 +35,11 @@ static VALUE av_image_height(VALUE self)
     return rb_iv_get(self, "@height");
 }
 
+/* Get the size of the dst-image file */
+static VALUE av_image_size(VALUE self)
+{
+    return rb_iv_get(self, "@size");
+}
 
 /* Initialize the object, called before the callback is invoked */
 void av_image_init(VALUE self, const char* src_path, const char* dst_path, const char* err_str, int width, int height)
@@ -41,6 +49,16 @@ void av_image_init(VALUE self, const char* src_path, const char* dst_path, const
     rb_iv_set(self, "@error", (err_str ? rb_str_new2(err_str) : Qnil));
     rb_iv_set(self, "@width", INT2FIX(width));
     rb_iv_set(self, "@height", INT2FIX(height));
+    
+    struct stat sb;
+    if(stat(dst_path, &sb) == 0)
+    {
+        rb_iv_set(self, "@size", INT2FIX(sb.st_size));
+    }
+    else
+    {
+        rb_iv_set(self, "@size", 0);
+    }
 }
 
 
@@ -53,4 +71,5 @@ void init_async_vips_image()
     rb_define_method(cImage, "error", av_image_error, 0);
     rb_define_method(cImage, "width", av_image_width, 0);
     rb_define_method(cImage, "height", av_image_height, 0);
+    rb_define_method(cImage, "size", av_image_size, 0);
 }
