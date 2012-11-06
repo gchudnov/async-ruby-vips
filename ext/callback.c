@@ -46,11 +46,10 @@ static VALUE av_handle_proc(void *d)
     VALUE img = rb_class_new_instance(0, NULL, cImage);
 
     av_image_init(img, tdata);
-    av_free_transform_data(tdata);
-
     rb_funcall2(proc, rb_intern("call"), 1, &img);
-
     rb_gc_unregister_address(&tdata->proc);
+
+    av_free_transform_data(tdata);
 
     return Qnil;
 }
