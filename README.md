@@ -32,7 +32,7 @@ AsyncVips.set_cache(100)
 
 # Get image information:
 # Allowed symbols are:  :load
-inf = AsyncVips.info(:load => srcfile) do |img|
+AsyncVips.info(:load => srcfile) do |img|
   puts inf.src    # image filepath
   puts inf.width  # image width
   puts inf.height # image height
