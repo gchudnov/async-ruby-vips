@@ -54,12 +54,14 @@ void* av_build_image_thread_func(void* data)
     if(!tdata)
         return NULL;
 
-    //fprintf(stderr, "THREAD_FUNC(1) [%s] [%s]\n", tdata->src_path, tdata->dst_path);
+    //fprintf(stderr, "+THREAD_FUNC [%s] [%s]\n", tdata->src_path, tdata->dst_path);
 
     VipsImage* image;
     image = vips_image_new_mode(tdata->src_path, "r");
     if(image)
     {
+        //fprintf(stderr, "(1)\n");
+
         // SHRINK
         if(tdata->dst_path && tdata->target_width && tdata->target_height)
         {
@@ -68,13 +70,18 @@ void* av_build_image_thread_func(void* data)
             av_get_scale_transform2(image->Xsize, image->Ysize, tdata->target_width, tdata->target_height, image_scale_fit_no_scale_up, &width_ratio, &height_ratio);
 
             //fprintf(stderr, "WIDTH_RATIO: %f, HEIGHT_RATIO: %f\n", width_ratio, height_ratio);
+            //fprintf(stderr, "(2)\n");
 
             VipsImage* t = av_internal_shrink_image(image, width_ratio, height_ratio, &tdata->err_str);
             if(t)
             {
+                //fprintf(stderr, "(3)\n");
+
                 VipsImage* out = vips_image_new_mode(tdata->dst_path, "w");
                 if(out)
                 {
+                    //fprintf(stderr, "(4)\n");
+
                     if(im_copy(t, out))
                     {
                         tdata->err_str = copy_vips_error();
@@ -87,11 +94,14 @@ void* av_build_image_thread_func(void* data)
 
                     // DST INFO
                     av_get_image_file_size(tdata->dst_path, &tdata->final_size);
+
+                    //fprintf(stderr, "(5)\n");
                 }
                 else
                 {
                     tdata->err_str = copy_vips_error();
                 }
+
                 im_close(t);
             }
         }
@@ -106,8 +116,9 @@ void* av_build_image_thread_func(void* data)
         im_close(image);
     }
 
+    //fprintf(stderr, "-THREAD_FUNC ERR_STR:%s\n", tdata->err_str ? tdata->err_str : "<NONE>");
+
     av_add_to_event_qeueue(tdata);
-    //fprintf(stderr, "THREAD_FUNC(2):> ERR_STR:%s\n", tdata->err_str ? tdata->err_str : "<NONE>");
 
     return NULL;
 }
