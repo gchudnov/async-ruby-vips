@@ -48,7 +48,7 @@ void av_image_init(VALUE self, const transform_data_t* tdata)
     rb_iv_set(self, "@dst", (tdata->dst_path ? rb_str_new2(tdata->dst_path) : Qnil));
     rb_iv_set(self, "@error", (tdata->err_str ? rb_str_new2(tdata->err_str) : Qnil));
     rb_iv_set(self, "@width", INT2FIX(tdata->final_width));
-    rb_iv_set(self, "@height", INT2FIX(tdata->final_width));
+    rb_iv_set(self, "@height", INT2FIX(tdata->final_height));
     rb_iv_set(self, "@size", INT2FIX(tdata->final_size));
 }
 
