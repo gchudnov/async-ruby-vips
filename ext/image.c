@@ -42,24 +42,14 @@ static VALUE av_image_size(VALUE self)
 }
 
 /* Initialize the object, called before the callback is invoked */
-void av_image_init(VALUE self, const char* src_path, const char* dst_path, const char* err_str, int width, int height)
+void av_image_init(VALUE self, const transform_data_t* tdata)
 {
-    rb_iv_set(self, "@src", (src_path ? rb_str_new2(src_path) : Qnil));
-    rb_iv_set(self, "@dst", (dst_path ? rb_str_new2(dst_path) : Qnil));
-    rb_iv_set(self, "@error", (err_str ? rb_str_new2(err_str) : Qnil));
-    rb_iv_set(self, "@width", INT2FIX(width));
-    rb_iv_set(self, "@height", INT2FIX(height));
-    
-    const char* file_path = (dst_path ? dst_path : src_path);
-    long long file_size = 0;
-    if(file_path)
-    {
-        struct stat sb;
-        memset(&sb, 0, sizeof(stat));
-        stat(file_path, &sb);
-        file_size = sb.st_size;
-    }
-    rb_iv_set(self, "@size", INT2FIX(file_size));
+    rb_iv_set(self, "@src", (tdata->src_path ? rb_str_new2(tdata->src_path) : Qnil));
+    rb_iv_set(self, "@dst", (tdata->dst_path ? rb_str_new2(tdata->dst_path) : Qnil));
+    rb_iv_set(self, "@error", (tdata->err_str ? rb_str_new2(tdata->err_str) : Qnil));
+    rb_iv_set(self, "@width", INT2FIX(tdata->final_width));
+    rb_iv_set(self, "@height", INT2FIX(tdata->final_width));
+    rb_iv_set(self, "@size", INT2FIX(tdata->final_size));
 }
 
 

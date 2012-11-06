@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Grigoriy Chudnov"]
-  s.date = "2012-10-24"
+  s.date = "2012-11-06"
   s.description = "Non-blocking transformation and image writing in Ruby, powered by VIPS."
   s.email = "g.chudnov@gmail.com"
   s.extensions = ["ext/extconf.rb"]

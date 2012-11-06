@@ -7,12 +7,14 @@ typedef struct _transform_data_t
 {
     char* src_path;
     char* dst_path;
-
+    
     int target_width;
     int target_height;
 
     int final_width;
     int final_height;
+
+    long long final_size;
 
     VALUE proc;
     char* err_str;
@@ -22,6 +24,7 @@ typedef struct _transform_data_t
 } transform_data_t;
 
 
+transform_data_t* av_make_transform_data_src(const char* src_path);
 transform_data_t* av_make_transform_data(const char* src_path, const char* dst_path);
 void av_free_transform_data(transform_data_t* tdata);
 

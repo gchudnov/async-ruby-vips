@@ -9,6 +9,24 @@ ID av_t_id_save;
 ID av_t_id_scale_x;
 ID av_t_id_scale_y;
 
+/* Get the size of a file */
+static void av_get_image_file_size(const char* file_path, long long* file_size)
+{
+    long long sz = 0;
+    if(file_path)
+    {
+        struct stat sb;
+        memset(&sb, 0, sizeof(stat));
+        int err = stat(file_path, &sb);
+        if(!err)
+        {
+            sz = sb.st_size;
+        }
+    }
+
+    *file_size = sz;
+}
+
 /* Shrinks image using the provided width and height ratios */
 static VipsImage* av_internal_shrink_image(VipsImage* image, double width_ratio, double height_ratio, char** err_str)
 {
@@ -30,7 +48,7 @@ static VipsImage* av_internal_shrink_image(VipsImage* image, double width_ratio,
 }
 
 /* Thread function for image processing */
-static void* av_build_image_thread_func(void* data)
+void* av_build_image_thread_func(void* data)
 {
     transform_data_t* tdata = (transform_data_t*)data;
     if(!tdata)
@@ -43,7 +61,7 @@ static void* av_build_image_thread_func(void* data)
     if(image)
     {
         // SHRINK
-        if(tdata->target_width && tdata->target_height)
+        if(tdata->dst_path && tdata->target_width && tdata->target_height)
         {
             double width_ratio = 0, height_ratio = 0;
 
@@ -66,6 +84,9 @@ static void* av_build_image_thread_func(void* data)
                     tdata->final_height = out->Ysize;
 
                     im_close(out);
+
+                    // DST INFO
+                    av_get_image_file_size(tdata->dst_path, &tdata->final_size);
                 }
                 else
                 {
@@ -74,6 +95,14 @@ static void* av_build_image_thread_func(void* data)
                 im_close(t);
             }
         }
+        else
+        {
+            // SRC INFO
+            tdata->final_width = image->Xsize;
+            tdata->final_height = image->Ysize;
+            av_get_image_file_size(tdata->src_path, &tdata->final_size);
+        }
+
         im_close(image);
     }
 

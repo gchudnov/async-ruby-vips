@@ -1,6 +1,25 @@
 #include "transform_data.h"
 
 /* Creates a new transform_data structure */
+transform_data_t* av_make_transform_data_src(const char* src_path)
+{
+    transform_data_t* tdata = (transform_data_t*)malloc(sizeof(transform_data_t));
+    if(tdata)
+    {
+        memset(tdata, 0, sizeof(transform_data_t));
+
+        // Source
+        tdata->src_path = (char*)malloc(strlen(src_path) + 1);
+        if(tdata->src_path)
+        {
+            strcpy(tdata->src_path, src_path);
+        }
+    }
+
+    return tdata;
+}
+
+/* Creates a new transform_data structure */
 transform_data_t* av_make_transform_data(const char* src_path, const char* dst_path)
 {
     transform_data_t* tdata = (transform_data_t*)malloc(sizeof(transform_data_t));

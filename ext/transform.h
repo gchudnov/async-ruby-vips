@@ -6,4 +6,6 @@
 
 void init_async_vips_transform();
 
+void* av_build_image_thread_func(void* data);
+
 #endif
