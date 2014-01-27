@@ -2,7 +2,7 @@
 #include "callback.h"
 #include "details.h"
 #include <pthread.h>
-#include <exif-data.h>
+#include <libexif/exif-data.h>
 #include <sys/stat.h>
 
 

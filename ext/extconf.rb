@@ -4,7 +4,15 @@ require "mkmf"
 
 File::unlink("Makefile") if (File::exist?("Makefile"))
 
-%w{7.28 7.27 7.26 7.24 7.23 7.22 7.20}.each{|x| break if pkg_config("vips-#{x}")}
+if not pkg_config("vips")
+  VIPS_VERSIONS = %w[7.29 7.28 7.27 7.26 7.24]
+
+  if not VIPS_VERSIONS.detect {|x| pkg_config("vips-#{x}") }
+    raise("no pkg_config for any of following libvips versions: #{VIPS_VERSIONS.join(', ')}")
+  end
+end
 
 have_header('vips/vips.h')
+have_header('libexif/exif-data.h')
+
 create_makefile('async_vips_ext')
