@@ -105,7 +105,7 @@ static void av_create_event_thread(void)
 }
 
 /* Add the transform data to the event queue */
-void av_add_to_event_qeueue(transform_data_t* tdata)
+void av_add_to_event_queue(transform_data_t* tdata)
 {
     pthread_mutex_lock(&av_proc_mutex);
     av_proc_queue_push(tdata);
