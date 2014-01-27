@@ -11,6 +11,7 @@ ID av_t_id_save;
 ID av_t_id_scale_x;
 ID av_t_id_scale_y;
 
+
 /* Get the size of a file */
 static void av_get_image_file_size(const char* file_path, long long* file_size)
 {
@@ -43,7 +44,7 @@ Get image orientation from EXIF
      7  right side   bottom
      8  left side    bottom
 */
-int av_get_orientation(VipsImage* image)
+static int av_get_orientation(VipsImage* image)
 {
     int orientation = 0;
 
@@ -73,6 +74,35 @@ int av_get_orientation(VipsImage* image)
     return orientation;
 }
 
+/* Sets the image orientation */
+static void av_set_orientation(VipsImage* image, int orientation)
+{
+    GType exif_type = vips_image_get_typeof(image, VIPS_META_EXIF_NAME);
+    if(exif_type != 0)
+    {
+        unsigned char *data;
+        size_t data_length;
+        if(!vips_image_get_blob(image, VIPS_META_EXIF_NAME, (void *)&data, &data_length))
+        {
+            ExifData *ed;
+            ed = exif_data_new_from_data(data, data_length);
+            if(ed != NULL)
+            {
+                ExifByteOrder bo = exif_data_get_byte_order(ed);
+                ExifEntry *ee = exif_data_get_entry(ed, EXIF_TAG_ORIENTATION);
+                if(ee)
+                {
+                    exif_set_short(ee->data, bo, (short)orientation);
+                    vips_image_set_blob(image, VIPS_META_EXIF_NAME, NULL, (void *)ed, data_length);
+                }
+
+                exif_data_free(ed);
+            }
+        }
+    }
+
+}
+
 /* Shrinks image using the provided width and height ratios */
 static VipsImage* av_internal_shrink_image(VipsImage* image, double width_ratio, double height_ratio, char** err_str)
 {
@@ -93,6 +123,131 @@ static VipsImage* av_internal_shrink_image(VipsImage* image, double width_ratio,
     return t;
 }
 
+/* Rotates the image */
+static VipsImage* av_internal_rotate(VipsImage* in, VipsAngle angle, char** err_str)
+{
+    VipsImage* t = im_open("temp-image", "p");
+    if(!t)
+    {
+        *err_str = copy_vips_error();
+        return NULL;
+    }
+
+    if(vips_rot(in, &t, angle, NULL))
+    {
+        *err_str = copy_vips_error();
+        return NULL;
+    }
+
+    return t;
+}
+
+/* Flips the image */
+static VipsImage* av_internal_flip(VipsImage* in, VipsDirection direction, char** err_str)
+{
+    VipsImage* t = im_open("temp-image", "p");
+    if(!t)
+    {
+        *err_str = copy_vips_error();
+        return NULL;
+    }
+
+    if(vips_flip(in, &t, direction, NULL))
+    {
+        *err_str = copy_vips_error();
+        return NULL;
+    }
+
+    return t;
+}
+
+/* Rotates & Flips the image */
+static VipsImage* av_internal_rotate_flip(VipsImage* in, VipsAngle angle, VipsDirection direction, char** err_str)
+{
+    VipsImage* t;
+    t = av_internal_rotate(in, angle, err_str);
+    if(t)
+    {
+        VipsImage* f;
+        f = av_internal_flip(t, direction, err_str);
+        if(f)
+        {
+            im_close(t);
+            t = f;
+        }
+        else
+        {
+            im_close(t);
+            t = NULL;
+        }
+    }
+
+    return t;
+}
+
+/*
+ Transforms image orientation
+   1) = NONE
+   2) = FLIP_H
+   3) = ROT_180
+   4) = FLIP_V
+   5) = TRANSPOSE
+   6) = ROT_90
+   7) = TRANSVERSE
+   8) = ROT_270
+ */
+static VipsImage* av_internal_transform_image_orientation(VipsImage* image, int orientation, char** err_str)
+{
+    VipsImage* res = NULL;
+
+    switch(orientation)
+    {
+        case 1:
+            // no-op
+            break;
+
+        case 2:
+            res = av_internal_flip(image, VIPS_DIRECTION_HORIZONTAL, err_str);
+            break;
+
+        case 3:
+            res = av_internal_rotate(image, VIPS_ANGLE_180, err_str);
+            break;
+
+        case 4:
+            res = av_internal_flip(image, VIPS_DIRECTION_VERTICAL, err_str);
+            break;
+
+        case 5:
+            res = av_internal_rotate_flip(image, VIPS_ANGLE_90, VIPS_DIRECTION_HORIZONTAL, err_str);
+            break;
+
+        case 6:
+            res = av_internal_rotate(image, VIPS_ANGLE_90, err_str);
+            break;
+
+        case 7:
+            res = av_internal_rotate_flip(image, VIPS_ANGLE_270, VIPS_DIRECTION_HORIZONTAL, err_str);
+            break;
+
+        case 8:
+            res = av_internal_rotate(image, VIPS_ANGLE_270, err_str);
+            break;
+
+        default:
+            // no-op
+            break;
+    }
+
+    if(res)
+    {
+        av_set_orientation(res, 1);
+    }
+
+    return res;
+}
+
+
 /* Thread function for image processing */
 void* av_build_image_thread_func(void* data)
 {
@@ -104,21 +259,11 @@ void* av_build_image_thread_func(void* data)
     image = vips_image_new_mode(tdata->src_path, "r");
     if(image)
     {
+        int is_transform_orientation = 1;
+
         // ORIENTATION
         int orientation = av_get_orientation(image);
         //fprintf(stderr, "orientation: %d\n", orientation);
-        if(orientation > 1)
-        {
-            // Need to transform an image so that orientation becomes 1
-            // [ 1 ] = NONE
-            // [ 2 ] = FLIP_H
-            // [ 3 ] = ROT_180
-            // [ 4 ] = FLIP_V
-            // [ 5 ] = TRANSPOSE
-            // [ 6 ] = ROT_90
-            // [ 7 ] = TRANSVERSE
-            // [ 8 ] = ROT_270
-        }
 
         // SHRINK
         if(tdata->dst_path && tdata->target_width && tdata->target_height)
@@ -134,6 +279,18 @@ void* av_build_image_thread_func(void* data)
             t = av_internal_shrink_image(image, width_ratio, height_ratio, &tdata->err_str);
             if(t)
             {
+                if(is_transform_orientation && orientation > 1)
+                {
+                    // Need to transform an image so that orientation becomes 1
+                    VipsImage* tran;
+                    tran = av_internal_transform_image_orientation(t, orientation, &tdata->err_str);
+                    if(tran)
+                    {
+                        im_close(t);
+                        t = tran;
+                    }
+                }
+
                 VipsImage* out;
                 out = vips_image_new_mode(tdata->dst_path, "w");
                 if(out)
