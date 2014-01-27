@@ -3,13 +3,29 @@ async-ruby-vips
 
 Non-blocking transformation and image writing in Ruby, powered by VIPS
 
-## Requirements.
+## Requirements
 
   * OS X or Linux
-  * MRI 1.9.2
+  * MRI >= 1.9.2
   * libvips 7.28.x
+  * libexif
 
-## Example.
+## Prerequisites
+  * On Ubuntu, `apt-get install libvips-dev`, or follow the guidelines at: https://github.com/jcupitt/libvips
+
+If you installed it from source, make sure:
+  * /usr/local/lib is on your LD_LIBRARY_PATH
+  * /usr/local/bin is on PATH
+  * /usr/local/lib/pkgconfig is on PKG_CONFIG_PATH
+
+
+## Building
+  * bundle install # to install dependencies
+  * rake gemspec # to generate gemspec file
+  * rake build # to build the gem
+  * rake install # to install the gem
+
+## Example
 
 ```ruby
 require 'rubygems'
@@ -76,3 +92,10 @@ end
 
 
 ```ruby
+
+
+## Version history
+
+### 1.2.0 - added support for natural_orientation flag
+### 1.1.0 - shrink operation
+### 1.0.0 - initial release
