@@ -11,6 +11,8 @@ typedef struct _transform_data_t
     int target_width;
     int target_height;
 
+    int natural_orientation;
+
     int final_width;
     int final_height;
 

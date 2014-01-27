@@ -10,6 +10,7 @@ ID av_t_id_load;
 ID av_t_id_save;
 ID av_t_id_scale_x;
 ID av_t_id_scale_y;
+ID av_t_id_natural_orientation;
 
 
 /* Get the size of a file */
@@ -259,9 +260,8 @@ void* av_build_image_thread_func(void* data)
     image = vips_image_new_mode(tdata->src_path, "r");
     if(image)
     {
-        int is_transform_orientation = 1;
-
         // ORIENTATION
+        int is_transform_orientation = tdata->natural_orientation;
         int orientation = av_get_orientation(image);
         //fprintf(stderr, "orientation: %d\n", orientation);
 
@@ -365,9 +365,15 @@ static VALUE av_transform(int argc, VALUE *argv, VALUE self)
     if(NIL_P(scale_x))
         scale_x = scale_y;
 
+    VALUE natural_orient_flag = rb_hash_aref(params, ID2SYM(av_t_id_natural_orientation));
+    if(!NIL_P(natural_orient_flag) &&
+       (TYPE(natural_orient_flag) != T_TRUE) && (TYPE(natural_orient_flag) != T_FALSE))
+        rb_raise(rb_eArgError, "Invalid natural orientation: transform(:natural_orientation => true|false)");
+
     transform_data_t* tdata = av_make_transform_data(StringValuePtr(load), StringValuePtr(save));
     tdata->target_width = NUM2INT(scale_x);
     tdata->target_height = NUM2INT(scale_y);
+    tdata->natural_orientation = (TYPE(natural_orient_flag) == T_TRUE ? 1 : 0);
     tdata->proc = proc;
 
     rb_gc_register_address(&tdata->proc);
@@ -386,4 +392,5 @@ void init_async_vips_transform(void)
     av_t_id_save = rb_intern("save");
     av_t_id_scale_x = rb_intern("scale_x");
     av_t_id_scale_y = rb_intern("scale_y");
+    av_t_id_natural_orientation = rb_intern("natural_orientation");
 }

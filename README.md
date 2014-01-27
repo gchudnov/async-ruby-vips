@@ -96,6 +96,6 @@ end
 
 ## Version history
 
-### 1.2.0 - added support for natural_orientation flag
+### 1.2.1 - added support for natural_orientation flag
 ### 1.1.0 - shrink operation
 ### 1.0.0 - initial release
