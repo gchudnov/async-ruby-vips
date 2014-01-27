@@ -23,8 +23,10 @@ void av_get_scale_transform2(int original_width, int original_height, int desire
     {
         if(scale_mode & image_scale_detect_proportions)
         {
-            double p1 = (double) (desired_width) / (double) (desired_height);
-            double p2 = (double) (original_width) / (double) (original_height);
+            double p1, p2;
+
+            p1 = (double) (desired_width) / (double) (desired_height);
+            p2 = (double) (original_width) / (double) (original_height);
 
             if((p1 > 1.0 && p2 < 1.0) || (p1 < 1.0 && p2 > 1.0))
             {
@@ -34,10 +36,12 @@ void av_get_scale_transform2(int original_width, int original_height, int desire
             }
         }
 
-        double k1 = (double) (original_width) / (double) (desired_width);
-        double k2 = (double) (original_height) / (double) (desired_height);
+        double k1, k2, k;
 
-        double k = (k1 > k2 ? k1 : k2);
+        k1 = (double) (original_width) / (double) (desired_width);
+        k2 = (double) (original_height) / (double) (desired_height);
+
+        k = (k1 > k2 ? k1 : k2);
 
         if(scale_mode & image_scale_no_scale_up)
         {
