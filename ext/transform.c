@@ -110,6 +110,14 @@ void* av_build_image_thread_func(void* data)
         if(orientation > 1)
         {
             // Need to transform an image so that orientation becomes 1
+            // [ 1 ] = NONE
+            // [ 2 ] = FLIP_H
+            // [ 3 ] = ROT_180
+            // [ 4 ] = FLIP_V
+            // [ 5 ] = TRANSPOSE
+            // [ 6 ] = ROT_90
+            // [ 7 ] = TRANSVERSE
+            // [ 8 ] = ROT_270
         }
 
         // SHRINK
