@@ -90,19 +90,11 @@ EM.run do
 end
 
 
-```ruby
-
-
-## Version history
-
-### 1.2.1 - added support for natural_orientation flag
-### 1.1.0 - shrink operation
-### 1.0.0 - initial release
+```
 
 ## Contact
 
 [Grigoriy Chudnov] (mailto:g.chudnov@gmail.com)
-
 
 ## License
 
