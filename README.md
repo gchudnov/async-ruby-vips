@@ -1,7 +1,6 @@
-async-ruby-vips
-===============
+# async-ruby-vips
 
-Non-blocking transformation and image writing in Ruby, powered by VIPS
+> Non-blocking transformation and image writing in Ruby, powered by VIPS
 
 ## Requirements
 
@@ -99,3 +98,12 @@ end
 ### 1.2.1 - added support for natural_orientation flag
 ### 1.1.0 - shrink operation
 ### 1.0.0 - initial release
+
+## Contact
+
+[Grigoriy Chudnov] (mailto:g.chudnov@gmail.com)
+
+
+## License
+
+Distributed under the [The MIT License (MIT)](https://github.com/gchudnov/async-ruby-vips/blob/master/LICENSE).
