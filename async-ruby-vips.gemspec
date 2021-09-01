@@ -54,18 +54,18 @@ Gem::Specification.new do |s|
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
+      s.add_development_dependency(%q<rdoc>, "~> 6.3")
       s.add_development_dependency(%q<bundler>, ["~> 1.5"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8"])
       s.add_development_dependency(%q<rspec>, ["~> 2.14"])
     else
-      s.add_dependency(%q<rdoc>, ["~> 3.12"])
+      s.add_dependency(%q<rdoc>, "~> 6.3")
       s.add_dependency(%q<bundler>, ["~> 1.5"])
       s.add_dependency(%q<jeweler>, ["~> 1.8"])
       s.add_dependency(%q<rspec>, ["~> 2.14"])
     end
   else
-    s.add_dependency(%q<rdoc>, ["~> 3.12"])
+    s.add_dependency(%q<rdoc>, "~> 6.3")
     s.add_dependency(%q<bundler>, ["~> 1.5"])
     s.add_dependency(%q<jeweler>, ["~> 1.8"])
     s.add_dependency(%q<rspec>, ["~> 2.14"])
